@@ -60,6 +60,7 @@ class Custom_Post_Type_Controller {
 	const ADD_TO_MENUS   = true;	// label => show_in_nav_menus
 	const ADD_TO_ADMIN_MENU = true;	// label => show_in_menu (bool or string)
 	const ADD_TO_ADMIN_BAR = false; // label => show_in_admin_bar
+	const ADD_TO_REST_API = true; // label => show_in_rest
 	const MENU_POSITION = 20;	// label => menu_position (default below pages)
 	const MENU_ICON = null;	// defaults to post icon
 	const META_CAP = true; // map_meta_cap
@@ -169,6 +170,7 @@ class Custom_Post_Type_Controller {
 			'show_in_nav_menus' => static::ADD_TO_MENUS,
 			'show_in_menu' => static::ADD_TO_ADMIN_MENU,
 			'show_in_admin_bar' => static::ADD_TO_ADMIN_BAR,
+			'show_in_rest' => static::ADD_TO_REST_API,
 			'menu_position' => static::MENU_POSITION,
 			'menu_icon' => static::MENU_ICON,
 			'capability_type' => static::CAPABILITY_TYPE,
