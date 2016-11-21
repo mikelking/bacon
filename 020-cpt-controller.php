@@ -170,7 +170,7 @@ class Custom_Post_Type_Controller {
 			'show_in_nav_menus' => static::ADD_TO_MENUS,
 			'show_in_menu' => static::ADD_TO_ADMIN_MENU,
 			'show_in_admin_bar' => static::ADD_TO_ADMIN_BAR,
-			'show_in_rest' => static::ADD_TO_REST_API,
+			'show_in_rest' => static::ADD_TO_REST_API,
 			'menu_position' => static::MENU_POSITION,
 			'menu_icon' => static::MENU_ICON,
 			'capability_type' => static::CAPABILITY_TYPE,
