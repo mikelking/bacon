@@ -39,6 +39,35 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 class WP_Base extends Base_Plugin {
 
 	/**
+	 * Generic method handler
+	 *
+	 * Allows to call is_mycusomposttype() for any custom post type.
+	 * Calling is_video() will check if the current post is of type 'video'.
+	 *
+	 * @param  string $method_name
+	 * @param  array $arguments
+	 * @return mixed
+	 */
+	public function __call( $method_name, $arguments ) {
+		if ( substr( $name, 0, 3 ) === 'is_' ) {
+			return self::_is_post_type( substr( $name, 3 ) );
+		} else {
+			return parent::__call( $name, $args );
+		}
+	}
+
+	/**
+	 * Generic post type check
+	 * @param  string  $expected_post_type Post type to check for
+	 * @return bool
+	 */
+	private static function _is_post_type( $expected_post_type ) {
+		$post_type = get_post_type( get_the_ID() );
+
+		return $post_type == $expected_post_type;
+	}
+
+	/**
 	 * Example of WordPress specific custom post type check
 	 * @return bool
 	 */
