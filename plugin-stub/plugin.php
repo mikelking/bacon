@@ -50,7 +50,7 @@ class Your_Plugin_Controller extends Base_Plugin {
 
     protected function uninstallation_actions() {}
 
-    protected static function init() {
+    public function init() {
         // This is how to add an activation hook if needed
         register_activation_hook( __FILE__, array( 'Your_Plugin_Controller', 'activator' ) );
 
@@ -63,5 +63,5 @@ class Your_Plugin_Controller extends Base_Plugin {
 }
 
 $ypc = Your_Plugin_Controller::get_instance();
-register_activation_hook( __FILE__, array( $ps, 'activator'));
-register_deactivation_hook( __FILE__, array( $ps, 'deactivator'));
+register_activation_hook( __FILE__, array( $ypc, 'activator'));
+register_deactivation_hook( __FILE__, array( $ypc, 'deactivator'));

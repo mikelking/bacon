@@ -46,8 +46,6 @@ class Base_Plugin extends Singleton_Base {
 
 	protected static $activated = false;
 
-	protected function __construct() {}
-
 	protected function activation_actions() {}
 
 	protected function deactivation_actions() {}
