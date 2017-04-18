@@ -2,8 +2,8 @@
 
 /*
 Plugin Name: URL Magick
-Version: 1.0
-Description: A simple framework for consistently manipulating URLs on TMBI sites
+Version: 1.0.1
+Description: A simple framework for consistently manipulating URLs part of the <a href='https://github.com/mikelking/bacon' target='_blank'>bacon project</a>.
 Author: Mikel King
 Text Domain: url-magick
 License: BSD(3 Clause)
@@ -39,7 +39,8 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 */
 
 class URL_Magick {
-	const URL_DELIM = '/';
+	const URL_DELIM         = '/';
+	const PROTOCOL_DELIM    = '://';
 
 	public static $protocol;
 	public static $host;
@@ -51,8 +52,11 @@ class URL_Magick {
 	public static $endpoint;
 	public static $cleaned_url;
 
-	public function __construct( $url ) {
+	public function __construct( $url = null ) {
 		try {
+			if ( ! $url ) {
+				$url = self::get_current_page_url();
+			}
 			self::$cleaned_url = self::get_cleaned_url( $url );
 			self::parse_url();
 		} catch ( WP_Exception $e ) {
@@ -61,11 +65,28 @@ class URL_Magick {
 		}
 	}
 
+	public static function get_protocol() {
+		if ( isset( $_SERVER ) && array_key_exists( 'HTTP_X_FORWARDED_PROTO', $_SERVER ) ) {
+			return( filter_var( $_SERVER['HTTP_X_FORWARDED_PROTO'], FILTER_SANITIZE_URL ) );
+		}
+		return( 'http' );
+	}
+
+	public static function get_current_page_url() {
+		//$_SERVER['REQUEST_SCHEME']
+		//default to make wp-cli pass by
+		if ( array_key_exists( 'REQUEST_SCHEME', $_SERVER ) ) {
+			return( self::get_protocol() . self::PROTOCOL_DELIM . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		}
+		return( 'http' . self::PROTOCOL_DELIM . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+	}
+
 	/**
 	 * @return mixed
 	 */
 	public static function parse_url() {
 		$url_parts = parse_url( self::$cleaned_url );
+		self::set_endpoint();
 
 		if ( isset( $url_parts['scheme'] ) ) {
 			self::$protocol = $url_parts['scheme'];
@@ -102,7 +123,7 @@ class URL_Magick {
 	public static function set_endpoint() {
 		$uri_parts = explode( self::URL_DELIM, self::$uri );
 		$part_count = count( $uri_parts );
-		if ( $part_count ) {
+		if ( $part_count && stripos( self::$uri, 'amp' ) ) {
 			self::$endpoint = $uri_parts[$part_count - 2];
 		}
 	}
