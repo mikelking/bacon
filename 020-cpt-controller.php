@@ -111,10 +111,10 @@ class Custom_Post_Type_Controller {
 		}
 	}
 
-	public function debug_cpt() {
+	public function debug_cpt( Custom_Post_Type_Controller $cpt = null, $msg = null ) {
 		// Displays the CPT setting in a standard WP admin message
 		if ( static::DEBUG && is_admin() ) {
-			$dump_msg = var_export( $this->cpt_args, true );
+			$dump_msg = var_export( $cpt->cpt_args, true );
 			$am = new Admin_Message( $msg . $dump_msg );
 			$am->display_admin_normal_message();
 		} elseif ( static::DEBUG && is_page( static::DEBUG_PAGE ) ) {
@@ -122,7 +122,7 @@ class Custom_Post_Type_Controller {
 			 * Displays the CPT setting in a WP page named debug (default)
 			 * @example http://MY-DOMAIN.com/debug/
 			 */
-			var_dump( $this->cpt_args );
+			var_dump( $cpt->cpt_args );
 		}
 	}
 
