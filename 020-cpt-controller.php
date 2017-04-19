@@ -116,7 +116,7 @@ class Custom_Post_Type_Controller {
 	 * @param null $cpt
 	 * @param null $msg
 	 */
-	public function debug_cpt( Custom_Post_Type_Controller $cpt = null, $msg = null ) {
+	public function debug_cpt( $cpt = null, $msg = null ) {
 		if ( $cpt ) {
 			$object = $cpt;
 		} else {
