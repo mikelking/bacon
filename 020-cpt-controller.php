@@ -245,7 +245,7 @@ class Custom_Post_Type_Controller {
 			'editor',
 			'author',
 			'custom-fields',
-			'thubmnail',
+			'thumbnail',
 			'excerpt',
 			'revisions'
 		);
