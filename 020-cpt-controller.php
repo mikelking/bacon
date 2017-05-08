@@ -9,20 +9,20 @@ Text Domain: cpt-controller
 License: BSD(3 Clause)
 License URI: http://opensource.org/licenses/BSD-3-Clause
 
-Copyright (C) 2014, Mikel King, rd.com, (mikel.king AT rd DOT com)
+Copyright (C) 2014, Mikel King, olivent.com, (mikel.king AT olivent DOT com)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
+	* Redistributions of source code must retain the above copyright notice, this
 list of conditions and the following disclaimer.
 
-* Redistributions in binary form must reproduce the above copyright notice,
+	* Redistributions in binary form must reproduce the above copyright notice,
 this list of conditions and the following disclaimer in the documentation
 and/or other materials provided with the distribution.
 
-* Neither the name of the {organization} nor the names of its
+	* Neither the name of the {organization} nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
