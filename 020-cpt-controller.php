@@ -104,7 +104,7 @@ class Custom_Post_Type_Controller {
 		$msg = static::SINGULAR_NAME . ' CPT: ';
 		try {
 			register_post_type( $this->lc_singular_name, $this->cpt_args );
-			$this->debug_cpt();
+			$this->debug_cpt( $this->cpt_args, $msg );
 		} catch ( WP_Exception $e ) {
 			var_dump( $this->cpt_args );
 			return( true );
