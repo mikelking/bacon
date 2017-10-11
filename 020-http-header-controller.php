@@ -8,20 +8,25 @@
  * @see http://php.net/manual/en/function.header.php
  */
 class HTTP_Header_Controller extends Singleton_Base {
-	const VERSION              = '0.1';
-	const OUTPUT_BUFFERING     = false;
-	const FEED_SLUG            = '/feed/';
-	const CACHE_MAX_AGE        = 3600; //seconds
-	const DEFAULT_CACHE_AGE    = 14400; //seconds
-	const HOME_CACHE_AGE       = 14400; //seconds
-	const TAXONOMY_CACHE_AGE   = 21600; //seconds (6 hours)
-	const ARCHIVE_CACHE_AGE    = 21600; //seconds (6 hours)
-	const CONTENT_CACHE_AGE    = 86400; // seconds (1 day)
-	const FEED_CACHE_AGE       = 3600; //seconds
+	const VERSION            = '0.3';
+	const PRIORITY           = 99;
+	const OUTPUT_BUFFERING   = false;
+	const FEED_SLUG          = '/feed/';
+	const CACHE_REST         = true;
+	const REST_SLUG          = '/wp-json/';
+	const REVALITATION       = true;
+	const CACHE_MAX_AGE      = 3600; //seconds
+	const DEFAULT_CACHE_AGE  = 14400; //seconds
+	const HOME_CACHE_AGE     = 14400; //seconds
+	const TAXONOMY_CACHE_AGE = 21600; //seconds (6 hours)
+	const ARCHIVE_CACHE_AGE  = 21600; //seconds (6 hours)
+	const CONTENT_CACHE_AGE  = 86400; // seconds (1 day)
+	const FEED_CACHE_AGE     = 14400; //seconds
+	const REST_CACHE_AGE     = 14400; //seconds
 
 
 	public function __construct() {
-		add_action( 'send_headers', array( $this, 'send_http_page_headers' ) );
+		add_action( 'send_headers', array( $this, 'send_http_page_headers' ), static::PRIORITY );
 	}
 
 	/**
@@ -40,6 +45,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 * Default for HTTP page headers
 	 */
 	public function send_http_page_headers() {
+		$this->send_http_rest_header();
 		$this->send_http_content_header();
 		$this->send_http_home_header();
 		$this->send_http_taxonomy_header();
@@ -56,6 +62,33 @@ class HTTP_Header_Controller extends Singleton_Base {
 		);
 	}
 
+	public function is_rest_api() {
+		return(
+		stripos(
+			filter_var( $_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL ),
+			static::REST_SLUG )
+		);
+	}
+
+	public function must_revalidate() {
+		if ( static::REVALITATION ) {
+			return( ', must-revalidate' );
+		}
+		return( '' );
+	}
+
+	/**
+	 * Default for REST API calls
+	 */
+	public function send_http_rest_header() {
+		//$headers = apply_filters( 'rest_cache_headers', array(), $request_uri, $server, $request );
+		if ( $this->is_rest_api() && static::CACHE_REST ) {
+			$header  = $this->get_the_header_content_type();
+			header( 'Cache-Control: max-age=' . static::REST_CACHE_AGE . $this->must_revalidate(), true );
+			header( $header, true );
+		}
+	}
+
 	/**
 	 * Default for Feeds
 	 */
@@ -63,7 +96,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 		if ( $this->is_feed() ) {
 			$header  = $this->get_the_header_content_type();
 			$header .= 'charset=' . get_option( 'blog_charset' );
-			header( 'Cache-Control: max-age=' . static::FEED_CACHE_AGE . ', must-revalidate', true );
+			header( 'Cache-Control: max-age=' . static::FEED_CACHE_AGE . $this->must_revalidate(), true );
 			header( $header, true );
 		}
 	}
@@ -73,7 +106,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 */
 	public function send_http_taxonomy_header() {
 		if ( is_tag() || is_category() ) {
-			header( 'Cache-Control: max-age=' . static::TAXONOMY_CACHE_AGE . ', must-revalidate', true );
+			header( 'Cache-Control: max-age=' . static::TAXONOMY_CACHE_AGE . $this->must_revalidate(), true );
 			header( $header, true );
 		}
 	}
@@ -83,7 +116,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 */
 	public function send_http_archive_header() {
 		if ( is_archive() ) {
-			header( 'Cache-Control: max-age=' . static::ARCHIVE_CACHE_AGE . ', must-revalidate', true );
+			header( 'Cache-Control: max-age=' . static::ARCHIVE_CACHE_AGE . $this->must_revalidate(), true );
 			header( $header, true );
 		}
 	}
@@ -93,7 +126,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 */
 	public function send_http_content_header() {
 		if ( $this->is_content() ) {
-			header( 'Cache-Control: max-age=' . static::ARCHIVE_CACHE_AGE . ', must-revalidate', true );
+			header( 'Cache-Control: max-age=' . static::ARCHIVE_CACHE_AGE . $this->must_revalidate(), true );
 			header( $header, true );
 		}
 	}
@@ -103,7 +136,7 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 */
 	public function send_http_home_header() {
 		if ( is_front_page() || is_home() ) {
-			header( 'Cache-Control: max-age=' . static::HOME_CACHE_AGE . ', must-revalidate', true );
+			header( 'Cache-Control: max-age=' . static::HOME_CACHE_AGE . $this->must_revalidate(), true );
 			header( $header, true );
 		}
 	}
@@ -113,9 +146,18 @@ class HTTP_Header_Controller extends Singleton_Base {
 	 */
 	public function send_http_default_header() {
 		if ( ! is_admin() && ! Base_Plugin::is_cms_user() ) {
-			header( 'Cache-Control: max-age=' . static::DEFAULT_CACHE_AGE . ', must-revalidate', true );
+			$header = $this->get_the_page_header_content_type();
+			header( 'Cache-Control: max-age=' . static::DEFAULT_CACHE_AGE .  $this->must_revalidate(), true );
 			header( $header, true );
 		}
+	}
+
+	/**
+	 * page standard content types
+	 * @return string
+	 */
+	public function get_the_page_header_content_type() {
+		return( 'Content-Type: text/html' );
 	}
 
 	/**
