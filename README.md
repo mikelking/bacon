@@ -2,6 +2,9 @@
 
 Version 1.0.0
 
+This project is managed with *Taiga* at https://tree.taiga.io/project/mikel-bacon
+
+
 - Bacon is a fork of the singleton_base system I started several years ago. The plan is for this framework to completely eclipse that system and spark a new era of development.
 
 - Your project is a grilled cheese sandwich and adding this framework (like bacon) just kicks that sandwich up to a whole new level. A lot of work has gone into making is composer friendly. This means that you will be able to install WordPress and add Bacon to the mu-plugin directory without impacting your repository.
