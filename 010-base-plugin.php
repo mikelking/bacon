@@ -40,12 +40,13 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 //Debug::enable_error_reporting();
 
 class Base_Plugin extends Singleton_Base {
-	const IN_FOOTER         = true;
-	const IN_HEADER         = false;
-	const FILE_SPEC         = __FILE__;
-	const FILTER_TAG        = '<script ';
-	const ASYNC_FILTER_TAG  = '<script async ';
-	const DEFER_FILTER_TAG  = '<script defer ';
+	const IN_FOOTER        = true;
+	const IN_HEADER        = false;
+	const FILE_SPEC        = __FILE__;
+    const PRIORITY         = 10;
+	const FILTER_TAG       = '<script ';
+	const ASYNC_FILTER_TAG = '<script async ';
+	const DEFER_FILTER_TAG = '<script defer ';
 
 	protected static $async_scripts = array();
 	protected static $defer_scripts = array();
