@@ -5,5 +5,7 @@ require( 'ad-asset.php' );
 require( 'test-asset.php' );
 
 $aa = new AdAsset;
+$aa->render_localized_data();
+
 $ta = new TestAsset;
-AssetBase::render_localized_data();
+$ta->render_localized_data();

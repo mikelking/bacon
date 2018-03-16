@@ -1,9 +1,8 @@
 <?php
 
-//require( '../010-asset-base.php' );
-class AdAsset extends AssetBase {
-    const ASSET_ID         = 'ad-asset';
-    const ASSET_DATA_ID    = 'ad_data';
+class AdAsset extends AtfJsAsset {
+    const ASSET_ID      = 'ad-asset';
+    const ASSET_DATA_ID = 'ad_data';
 
     public $data = array(
             "property" =>"6178",

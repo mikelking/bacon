@@ -1,7 +1,6 @@
 <?php
-
 /*
-Plugin Name: Base Plugin Class
+Plugin Name: Asset Management Class
 Version: 1.0
 Description: Sets a standard class to build new plugin from.
 Author: Mikel King
@@ -43,6 +42,10 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 class AssetBase {
 	const FILE_SPEC        = __FILE__;
     const PRIORITY         = 10;
+	const IN_HEADER        = false;
+	const IN_FOOTER        = true;
+    const ENQ_ASYNC        = false;
+    const ENQ_DEFER        = false; 
 	const FILTER_TAG       = '<script ';
 	const ASYNC_FILTER_TAG = '<script async ';
 	const DEFER_FILTER_TAG = '<script defer ';
@@ -54,6 +57,7 @@ class AssetBase {
 
 	protected static $async_scripts = array();
 	protected static $defer_scripts = array();
+
     public static $encoded_data_stack = array();
 
     public function register_local_data( array $data ) {
@@ -135,10 +139,43 @@ class AssetBase {
 }
 
 class AtfJsAsset extends Assetbase {
-	const IN_HEADER = false;
+    const ATF_HEADER_NOTE = "<!-- Above the fold asset management -->\n";
+    public static $encoded_atf_data_stack = array();
+
+    public function register_local_data( array $data ) {
+        $encoded_data = json_encode( $data );
+        static::$encoded_atf_data_stack[] = sprintf( static::LOCALIZATION_FMT, static::ASSET_DATA_ID, $encoded_data );
+    }
+
+    public static function render_localized_data() {
+        print( self::ATF_HEADER_NOTE );
+        print( static::LOCALIZED_HEADER );
+        foreach ( static::$encoded_atf_data_stack as $data_block) {
+            print( $data_block . PHP_EOL );
+        }
+        print( static::LOCALIZED_FOOTER );
+    }
+
 }
 
 
 class BtfJsAsset extends Assetbase {
-	const IN_FOOTER = true;
+    const BTF_HEADER_NOTE = "<!-- Below the fold asset management -->\n";
+
+    public static $encoded_btf_data_stack = array();
+
+    public function register_local_data( array $data ) {
+        $encoded_data = json_encode( $data );
+        static::$encoded_btf_data_stack[] = sprintf( static::LOCALIZATION_FMT, static::ASSET_DATA_ID, $encoded_data );
+    }
+
+    public static function render_localized_data() {
+        print( self::BTF_HEADER_NOTE );
+        print( static::LOCALIZED_HEADER );
+        foreach ( static::$encoded_btf_data_stack as $data_block) {
+            print( $data_block . PHP_EOL );
+        }
+        print( static::LOCALIZED_FOOTER );
+    }
+
 }

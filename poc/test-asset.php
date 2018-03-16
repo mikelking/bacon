@@ -1,10 +1,8 @@
 <?php
 
-//require( '../010-asset-base.php' );
-
-class TestAsset extends AssetBase {
-    const ASSET_ID         = 'test-asset';
-    const ASSET_DATA_ID    = 'test_data';
+class TestAsset extends BtfJsAsset {
+    const ASSET_ID      = 'test-asset';
+    const ASSET_DATA_ID = 'test_data';
 
     public $data = array(
             "lotame_id" => "LOTCC_10234"
