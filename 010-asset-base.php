@@ -41,6 +41,7 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 
 class Asset_Base {
 	use Asset_Handler;
+
 	const FILE_SPEC        = __FILE__;
 	const PRIORITY         = 10;
 	const IN_HEADER        = false;
