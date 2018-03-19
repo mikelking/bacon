@@ -78,3 +78,27 @@ There is a huge advantage to using the mu based solution in that if you develop 
 ### That's about all there is to it, because mu-plugins are kind of set it and forget it utilities. In addition because they have not on/off switches you do not have to worry about someone inadvertently deactivating ALL of your plugins that depend on it.
 
  Ok so you are wondering what's the catch? Well for one WordPress does not install the mu-plugins tree; therefore, you must do that manually. In addition you must manually keep it up to date. Finally mu-plugins do not normally (although there are ways around this) work from within subdirectories like regular plugins. They are meant to have limited scope and minimal (generally zero) configuration.
+
+### Framework hierarchy
+ 000 - singleton, traits and interfaces
+
+ 005 - standalone classes utilized by other classes
+
+ 010 - Base working classes
+
+ 015 - Subordinate user definable intermediary classes e.g. wp base
+
+ 020 - Utility and Encapsulation classes
+
+### 2.0 Reorganization
+ - enhanced the base plugin class
+ - convert the wp base class to a sample
+ - ad base classes
+ - better documentation
+ - extendable asset object definition
+ - async script enqueuing
+ - deferred script enqueuing
+ - above the fold js asset management
+ - below the fold js asset management
+ - enhanced localization management
+ - enhanced dependency management
