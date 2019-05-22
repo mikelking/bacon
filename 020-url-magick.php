@@ -41,7 +41,7 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 class URL_Magick {
 	const URL_DELIM      = '/';
 	const PROTOCOL_DELIM = '://';
-	const DEBUG_KEY      = 'true';
+	const DEBUG_KEY      = '5ffe533';
 
 	public static $protocol;
 	public static $host;
@@ -69,6 +69,9 @@ class URL_Magick {
 		}
 	}
 
+	/**
+	 * This attempts to detect a CDN forwarded protocol
+	 */
 	public static function get_protocol() {
 		if ( isset( $_SERVER ) && array_key_exists( 'HTTP_X_FORWARDED_PROTO', $_SERVER ) ) {
 			return( filter_var( $_SERVER['HTTP_X_FORWARDED_PROTO'], FILTER_SANITIZE_URL ) );
@@ -76,6 +79,9 @@ class URL_Magick {
 		return( 'http' );
 	}
 
+	/**
+	 * This attempts to detect current URL
+	 */
 	public static function get_current_page_url() {
 		//$_SERVER['REQUEST_SCHEME']
 		//default to make wp-cli pass by
@@ -87,7 +93,7 @@ class URL_Magick {
 
 	/**
 	 * @see https://php.net/manual/en/function.parse-url.php
-	 * @return mixed
+	 * @return array
 	 */
 	public static function parse_url() {
 		$url_parts = parse_url( self::$cleaned_url );
@@ -99,7 +105,7 @@ class URL_Magick {
 
 		if ( isset( $url_parts['host'] ) ) {
 			self::$host = $url_parts['host'];
-			self::$get_domain_sections( self::$host );
+			self::split_domain_sections( self::$host );
 		}
 
 		if ( isset( $url_parts['user'] ) ) {
@@ -131,7 +137,7 @@ class URL_Magick {
 	 *
 	 * @see https://php.net/manual/en/function.parse-url.php
 	 */
-	public static function get_domain_sections( $domain ) {
+	public static function split_domain_sections( $domain ) {
 		$domain_parts = explode( '.', $domain );
 		$part_count = count( $domain_parts );
 
@@ -150,6 +156,9 @@ class URL_Magick {
 		}
 	}
 
+	/**
+	 * Simply return a sanitized copy of the URL
+	 */
 	public static function get_cleaned_url( $url ) {
 		return( filter_var( $url, FILTER_SANITIZE_URL ) );
 	}
