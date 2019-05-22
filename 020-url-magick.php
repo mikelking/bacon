@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: URL Magick
-Version: 1.0.1
+Version: 1.0.2
 Description: A simple framework for consistently manipulating URLs part of the <a href='https://github.com/mikelking/bacon' target='_blank'>bacon project</a>.
 Author: Mikel King
 Text Domain: url-magick
@@ -39,11 +39,15 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 */
 
 class URL_Magick {
-	const URL_DELIM         = '/';
-	const PROTOCOL_DELIM    = '://';
+	const URL_DELIM      = '/';
+	const PROTOCOL_DELIM = '://';
+	const DEBUG_KEY      = '5ffe533';
 
 	public static $protocol;
 	public static $host;
+	public static $hostname;
+	public static $apex;
+	public static $tld;
 	public static $user;
 	public static $pass;
 	public static $uri;
@@ -65,6 +69,9 @@ class URL_Magick {
 		}
 	}
 
+	/**
+	 * This attempts to detect a CDN forwarded protocol
+	 */
 	public static function get_protocol() {
 		if ( isset( $_SERVER ) && array_key_exists( 'HTTP_X_FORWARDED_PROTO', $_SERVER ) ) {
 			return( filter_var( $_SERVER['HTTP_X_FORWARDED_PROTO'], FILTER_SANITIZE_URL ) );
@@ -72,6 +79,9 @@ class URL_Magick {
 		return( 'http' );
 	}
 
+	/**
+	 * This attempts to detect current URL
+	 */
 	public static function get_current_page_url() {
 		//$_SERVER['REQUEST_SCHEME']
 		//default to make wp-cli pass by
@@ -82,7 +92,8 @@ class URL_Magick {
 	}
 
 	/**
-	 * @return mixed
+	 * @see https://php.net/manual/en/function.parse-url.php
+	 * @return array
 	 */
 	public static function parse_url() {
 		$url_parts = parse_url( self::$cleaned_url );
@@ -94,6 +105,7 @@ class URL_Magick {
 
 		if ( isset( $url_parts['host'] ) ) {
 			self::$host = $url_parts['host'];
+			self::split_domain_sections( self::$host );
 		}
 
 		if ( isset( $url_parts['user'] ) ) {
@@ -120,6 +132,22 @@ class URL_Magick {
 		return( $url_parts );
 	}
 
+	/**
+	 * This extends to further splitting up the host into discreet actionable parts
+	 *
+	 * @see https://php.net/manual/en/function.parse-url.php
+	 */
+	public static function split_domain_sections( $domain ) {
+		$domain_parts = explode( '.', $domain );
+		$part_count = count( $domain_parts );
+
+		if ( $part_count === 3 ) {
+			self::$hostname = $domain_parts[0];
+			self::$apex     = $domain_parts[1];
+			self::$tld      = $domain_parts[2];
+		}
+	}
+
 	public static function set_endpoint() {
 		$uri_parts = explode( self::URL_DELIM, self::$uri );
 		$part_count = count( $uri_parts );
@@ -128,20 +156,31 @@ class URL_Magick {
 		}
 	}
 
+	/**
+	 * Simply return a sanitized copy of the URL
+	 */
 	public static function get_cleaned_url( $url ) {
 		return( filter_var( $url, FILTER_SANITIZE_URL ) );
 	}
 
+	/**
+	 * This only prints if the URL param is present.
+	 */
 	public static function print_url_parts() {
-		print( 'Protocol: ' . self::$protocol . PHP_EOL );
-		print( 'Host: ' . self::$host . PHP_EOL );
-		print( 'User: ' . self::$user . PHP_EOL );
-		print( 'Password: ' . self::$pass . PHP_EOL );
-		print( 'URI: ' . self::$uri . PHP_EOL );
-		print( 'Query string: ' . self::$query . PHP_EOL );
-		print( 'URL fragment: ' . self::$fragment . PHP_EOL );
-		print( 'Endpoint: ' . self::$endpoint . PHP_EOL );
+		if ( isset( $_REQUEST['debug'] ) && $_REQUEST['debug'] === static::DEBUG_KEY ) {
+			print( 'Protocol: ' . self::$protocol . PHP_EOL );
+			print( 'Host: ' . self::$host . PHP_EOL );
+			print( 'Hostname: ' . self::$hostname . PHP_EOL );
+			print( 'Apex: ' . self::$apex . PHP_EOL );
+			print( 'TLD: ' . self::$tld . PHP_EOL );
+			print( 'User: ' . self::$user . PHP_EOL );
+			print( 'Password: ' . self::$pass . PHP_EOL );
+			print( 'URI: ' . self::$uri . PHP_EOL );
+			print( 'Query string: ' . self::$query . PHP_EOL );
+			print( 'URL fragment: ' . self::$fragment . PHP_EOL );
+			print( 'Endpoint: ' . self::$endpoint . PHP_EOL );
 
-		print( 'Cleaned URL: ' . self::$cleaned_url . PHP_EOL );
+			print( 'Cleaned URL: ' . self::$cleaned_url . PHP_EOL );
+		}
 	}
 }
