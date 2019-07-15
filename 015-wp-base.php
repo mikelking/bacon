@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: WordPress Base Class
-Version: 1.4
+Version: 1.5
 Description: This is is the buffer between the base classes and your plugins. It is meant for adding code specific to your site. For example the is_slideshow() method. Adding code like this here allows you to have a standardized interface for dealing with custom post types within any descendant plugin.
 Author: Mikel King
 Text Domain: wp-base
@@ -36,7 +36,36 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+if ( file_exists( __DIR__ . '/inc/wpe-environment-finder.php' ) ) {
+	require( __DIR__ . '/inc/wpe-environment-finder.php' );
+}
+
+/**
+ * Class WP_Base
+ * This is where client specific code belongs think of this as the wp-config of bacon
+ */
 class WP_Base extends Base_Plugin {
+	public static $environment;
+
+	/*
+	 * The following construct break the singleton model but it is
+	 * intended as an introductory experiment with injectable interfaces.
+	 * Interface injection is part of the path to 2.0.
+	 */
+	public function __construct( Environment_Finder $env_interface = null ) {
+		if ( $env_interface ) {
+			if ( ! self::$environment ) {
+				self::$environment = $env_interface->findEnvironment();
+			}
+			/**
+			 * @todo redacted troubleshooting code before production
+			 *
+			 * @todo Should also work on a better way of handling these maybe just stuff it in an admin msg.
+			 */
+			//print( '<!-- Environment: ' . self::$environment . ' -->' . PHP_EOL );
+		}
+	}
 
 	/**
 	 * Generic method handler
@@ -64,7 +93,7 @@ class WP_Base extends Base_Plugin {
 	private static function _is_post_type( $expected_post_type ) {
 		$post_type = get_post_type( get_the_ID() );
 
-		return $post_type == $expected_post_type;
+		return( $post_type === $expected_post_type );
 	}
 
 	/**
@@ -78,23 +107,24 @@ class WP_Base extends Base_Plugin {
 		return( false );
 	}
 
-
 	/**
+	 * @DEPRECATED
 	 * @todo recommended for deprecation
 	 * @param $asset_path
 	 * @return mixed
 	 */
 	public function get_url_to_dir( $asset_path ) {
-		return( plugins_url( $asset_path, __DIR__ ));
+		return( plugins_url( $asset_path, __DIR__ ) );
 	}
 
 	/**
+	 * @DEPRECATED
 	 * @todo recommended for deprecation
 	 * @param $asset_path
 	 * @return mixed
 	 */
 	public function get_url_to_file( $asset_path ) {
-		return( plugins_url( $asset_path, __FILE__ ));
+		return( plugins_url( $asset_path, __FILE__ ) );
 	}
 }
 

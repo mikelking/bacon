@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Singleton Base Class
-Version: 1.4
+Version: 1.5
 Description: Sets a standard class to build new plugin from.
 Author: Mikel King
 Text Domain: singleton-base-plugin
@@ -41,7 +41,7 @@ abstract class Singleton_Base {
 	const ENABLED       = true;
 	const DISABLED      = false;
 	const EXCEPTION_HDR = 'PHP Exception:  ';
-	const DEFAULT_TZ    = 'America/New_York';
+	const DEFAULT_TZ    = 'UTC'; // According to ISO standard should be set to Europe/London
 	const FILE_SPEC     = __FILE__;
 
 	private static $instance;

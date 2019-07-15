@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Debug
-Version: 3.1
-Description: Provides a simple object framework insert debugging data into the content stream with easy to locate markers. BY itself the plugin does nothing more
-than make the class available to use. You must instantiate the Debugger in order to utilize it.
+Version: 3.2
+Description: Provides a simple object framework insert debugging data into the content stream with easy to locate markers without the ugliness of WP_DEBUG. BY itself the plugin does nothing more
+than make the class available to use. You must instantiate the Debugger AND set teh constant DEBUG_ENABLED to true in order to utilize it.
 Author: Mikel King
 Author URI: http://mikelking.com
 License: BSD(3 Clause)
@@ -47,13 +47,8 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
  * @copyright 2011
  */
 class Debug {
-	const VERSION           = '3.1';
-	const LOG_404_ERRORS    = false;
-	const MKEAPI            = false;	// True to activate the psuedo api
-	const LOG_MKEAPI        = true;		// True to activate request & response logging
-	const LOG_MKEAPI_HEADER = true;		// True to activate header logging
-	const DBG_MKEAPI_LOG    = false;
-	const DEBUG_SOURCEPOINT_API = true;
+	const VERSION       = '3.2';
+	const DEBUG_ENABLED = false;
 
 	public $debug_label;
 	public $debug_value;
@@ -66,19 +61,29 @@ class Debug {
 	public static $debug_data;
 
 	public function __construct() {
-		$this->whitelist = array(
-						ip2long( '10.252.8.0' ) => ip2long( '10.252.11.255' ),
-						ip2long( '172.16.0.0' ) => ip2long( '172.31.255.255' ),
-					);
+	    if ( $this->is_debug_enabled() ) {
+            /**
+             * Example of IP address white listing
 
-		$this->get_debug_this_flag();
-		/*         $this->get_debug_environment(); */
-		$this->get_target_addr();
-		/*         $this->whitelist_check(); */
-		$this->whitelisted = true;
-		$this->set_debug_label();
-		$this->set_debug_output();
+            $this->whitelist = array(
+                ip2long('10.252.8.0') => ip2long('10.252.11.255'),
+                ip2long('172.16.0.0') => ip2long('172.31.255.255'),
+            );
+	        */
+
+            $this->get_debug_this_flag();
+            /*         $this->get_debug_environment(); */
+            $this->get_target_addr();
+            /*         $this->whitelist_check(); */
+            $this->whitelisted = true;
+            $this->set_debug_label();
+            $this->set_debug_output();
+        }
 	}
+
+	public function is_debug_enabled() {
+	    return( static::DEBUG_ENABLED );
+    }
 
 	public function start_debug_comment_block() {
 		printf( "<!-- Begin debug comment thread %s\n", $this->debug_label );
@@ -178,21 +183,6 @@ class Debug {
 		}
 	}
 
-	/*
-        This section requires some improvement; a switch statement could clean this up.
-    */
-	public function get_debug_environment() {
-		if ( isset( $_SERVER['ENVIRONMENT'] ) ) {
-			$this->debug_environment = 'dev';
-		} else {
-			/*
-                Although I am no fond of ternary conditionals as they force you to
-                think backwards there are some rare cases that I do find them useful
-            */
-			$this->debug_environment = (isset( $_SERVER['ETSY_ENVIRONMENT'] )) ? $_SERVER['ETSY_ENVIRONMENT'] : 'production';
-		}
-	}
-
 	public function get_target_addr() {
 		if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
 			$this->target_addr = ip2long( $_SERVER['HTTP_X_FORWARDED_FOR'] );
@@ -221,49 +211,6 @@ class Debug {
 		if ( isset( $_GET['debug'] ) ) {
 			print('<!-- FileName: ' . $filename . ' -->' . PHP_EOL);
 		}
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function log_mke_api() {
-		if ( self::LOG_MKEAPI ||
-			( isset( $_GET['debug'] ) &&
-				$_GET['debug'] === 'logmkeapi' ) ) {
-			return( true );
-		}
-		return( false );
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function log_mke_api_header() {
-		if ( self::LOG_MKEAPI_HEADER ||
-			( isset( $_GET['debug'] ) &&
-				$_GET['debug'] === 'logmkeapihdr' ) ) {
-			return( true );
-		}
-		return( false );
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function debug_the_mkeapi_log() {
-		return(self::DBG_MKEAPI_LOG);
-	}
-
-	/**
-	 * @return bool
-	 */
-	public static function debug_mke_api() {
-		if ( self::MKEAPI ||
-			( isset( $_GET['debug'] ) &&
-			$_GET['debug'] === 'mkeapi' ) ) {
-			return( true );
-		}
-		return( false );
 	}
 
 	public static function print_cookie() {
@@ -365,13 +312,13 @@ class Debug {
 
 	public static function print_wp_order_listing($msg) {
 		if ( isset( $_GET['debug'] ) && $_GET['debug'] === 'articlesorder' ) {
-			print('<div style="color:red">Article Pubhlished on : ' .$msg .'</div>'. PHP_EOL);
+			print('<div style="color:red">Article Pubhlished on : ' . $msg .'</div>'. PHP_EOL);
 		}
 	}
 
 	public static function print_test_ads_unit($msg) {
 		if ( isset( $_GET['debug'] ) && $_GET['debug'] === 'adsunit' ) {
-			print('<p style="color:red">Debug ads Unit : ' .$msg .'</p>'. PHP_EOL);
+			print('<p style="color:red">Debug ads Unit : ' . $msg .'</p>'. PHP_EOL);
 		}
 	}
 
@@ -392,12 +339,11 @@ class Debug {
 		error_reporting( E_ALL & ~E_STRICT );
 	}
 
-	public static function debug_sourcpoint_api() {
-		if ( self::DEBUG_SOURCEPOINT_API ||
-			( isset( $_GET['debug'] ) &&
-				$_GET['debug'] === 'SourcpointApi' ) ) {
-			return( true );
-		}
-		return( false );
-	}
+    /**
+     * Default to production if the var is not set. Ideally the reliance will be redacted in 2.0
+     * @todo marked for deprecation
+     */
+    public function get_debug_environment() {
+        $this->debug_environment = $_SERVER['ENVIRONMENT'] ?? 'production';
+    }
 }
