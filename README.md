@@ -1,6 +1,6 @@
 # Bacon
 
-Version 1.0.0
+Version 1.0.16
 
 This project is managed with *Taiga* at https://tree.taiga.io/project/mikel-bacon
 
@@ -27,6 +27,7 @@ note to self: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 	015-wp-base.php
 	020-admin-message.php
 	020-advanced_blog_data.php
+	020-base-manager-admin.php
 	020-cookie-controller.php
 	020-cpt-controller.php
 	020-tax-controller.php
@@ -36,6 +37,7 @@ note to self: https://git-scm.com/book/en/v2/Git-Basics-Tagging
 	README.md
 	composer.json
 	cookie-controller
+	inc
 	plugin-stub
 ```
 
