@@ -46,7 +46,7 @@
  * @see http://php.net/manual/en/function.header.php
  */
 class HTTP_Header_Controller extends Singleton_Base {
-	const VERSION              = '0.1';
+	const VERSION              = '1.0';
 	const OUTPUT_BUFFERING     = false;
 	const FEED_SLUG            = '/feed/';
 	const CACHE_MAX_AGE        = 3600; //seconds
