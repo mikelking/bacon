@@ -2,8 +2,8 @@
 
 /*
     Plugin Name: Variation Base Class
-    Version: 1.7
-    Description: Adds a standardized base class for creating variants by extension
+    Version: 1.8
+    Description: Adds a standardized registry pattern class for creating variants by extension
     Author: Mikel King
     Author URI: http://mikelking.com
 License: BSD(3 Clause)
@@ -93,7 +93,7 @@ class Variant_Base extends Singleton_Base {
 	 * @return Variant_Base
 	 */
 	protected function set_ad_blocking( $key = null ) {
-		if ( isset( $key ) && $key != true ) {
+		if ( isset( $key ) && $key !== true ) {
 			self::$noads_variants[] = $key;
 		}  elseif ( isset( $this->new_registration ) && $key === true ) {
 			self::$noads_variants[] = $this->new_registration;
@@ -205,37 +205,6 @@ class Variant_Base extends Singleton_Base {
 			FILTER_FLAG_ENCODE_AMP,
 		);
 		return( filter_var( $data, FILTER_SANITIZE_STRING ) );
-	}
-
-	/**
-	 * PHP Warning:  filter_var() expects at most 3 parameters, 7 given
-	 */
-	public function debug_noads() {
-		print( '<!-- The ads have been blocked -->' . PHP_EOL );
-		print( '<!-- The noads query string "' . $this->validate_query_string() . '" was found. -->' . PHP_EOL);
-		print( '<!-- The is_active = "' . var_export( $this->is_active( 'noads' ), true ) . '" was found. -->' . PHP_EOL);
-		print( '<!-- The current variants: ' . PHP_EOL );
-		print_r( self::$variants, true );
-		print( ' -->' . PHP_EOL );
-
-		if ( isset( $this->found_variant ) ) {
-			print('<!-- The variant found was: ' . $this->found_variant . ' -->' . PHP_EOL);
-		} else {
-			print('<!-- The variant was not found. -->' . PHP_EOL);
-		}
-
-	}
-
-	/**
-	 * @param null $variant
-	 */
-	public static function debug_variant($variant = null) {
-		if ( $variant ) {
-			print('<!-- The variant target: ' . $variant . ' is active -->' . PHP_EOL);
-		}
-		print('<!-- The variant url param is set to: ' . $this->validate_variant_url() . ' -->' . PHP_EOL);
-
-		print('<!-- The variant array contains: ' . PHP_EOL . print_r( self::$variant, true ) . ' -->' . PHP_EOL);
 	}
 }
 // the following examples hope to demonstrate the maximum of flexibility in usage

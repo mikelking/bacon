@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: URL Magick
-Version: 1.0.2
+Version: 1.0.3
 Description: A simple framework for consistently manipulating URLs part of the <a href='https://github.com/mikelking/bacon' target='_blank'>bacon project</a>.
 Author: Mikel King
 Text Domain: url-magick
@@ -64,7 +64,10 @@ class URL_Magick {
 			self::$cleaned_url = self::get_cleaned_url( $url );
 			self::parse_url();
 		} catch ( WP_Exception $e ) {
-			var_dump( $this->cpt_args );
+			/*
+			 * Need to wrap this in the debug variant
+			 */
+			//var_dump( $this->cpt_args );
 			return( true );
 		}
 	}
