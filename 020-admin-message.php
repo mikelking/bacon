@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Admin Message Class
-Version: 1.0
+Version: 1.1
 Description: Adds a standardized base class for rendering messages in the WordPress Admin console. BY itself the plugin does nothing more
 than make the class available to use. You must instantiate the AdminMessage in order to utilize it.
 Author: Mikel King
@@ -47,9 +47,10 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 
 // Remember to implement any abstact methods.
 class Admin_Message {
-	const ERROR_DIV_CLASS_FMT = '<div id="message" class="error"><p><strong>%s</strong></p></div>';
+	const VERSION              = "1.1";
+	const ERROR_DIV_CLASS_FMT  = '<div id="message" class="error"><p><strong>%s</strong></p></div>';
 	const NORMAL_DIV_CLASS_FMT = '<div id="message" class="updated"><p><strong>%s</strong></p></div>';
-	const PRINT_OFF = true;
+	const PRINT_OFF            = true;
 
 	private $admin_msg;
 
@@ -92,7 +93,7 @@ class Admin_Message {
 	}
 
 	public function get_the_admin_message() {
-		if ( $this->error_level == 'error' ) {
+		if ( $this->error_level === 'error' ) {
 			return($this->get_admin_error_message());
 		} else {
 			return($this->get_admin_normal_message());

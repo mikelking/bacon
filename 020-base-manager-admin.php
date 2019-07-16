@@ -2,7 +2,7 @@
 
 /*
 Plugin Name:  Base Manager Admin Class
-Version: 1.0
+Version: 1.1
 Description: This calss should make it simple to create a manger for your various options in the CMS through an extensible means. Keep in mind that it is a basic first iteration and I shall endeavor to improve it over time.
 Author: Mikel King
 Text Domain: base-manager-admin
@@ -39,7 +39,7 @@ License URI: http://opensource.org/licenses/BSD-3-Clause
 */
 
 class Base_Manager_Admin {
-	const VERSION       = "1.0";
+	const VERSION       = "1.1";
 	const PAGE_TITLE    = 'Base Manager';
 	const MENU_SLUG     = 'base-manager';
 	const METHOD_PREFIX = 'base_manager';
