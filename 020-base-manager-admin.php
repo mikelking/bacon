@@ -70,6 +70,9 @@ class Base_Manager_Admin {
 	 */
 	public function get_options() {
 		if ( is_array( $this->options ) && ! empty( $this->options ) ) {
+			foreach ( $this->options as $key => $option ) {
+				$this->options[$key] = filter_var( $option, FILTER_SANITIZE_STRING)
+		    }
 			return( $this->options );
 		}
 		return null;
