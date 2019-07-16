@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Base Plugin Class
-Version: 1.0
+Version: 1.1
 Description: Sets a standard class to build new plugin from.
 Author: Mikel King
 Text Domain: base-plugin
@@ -70,10 +70,10 @@ class Base_Plugin extends Singleton_Base {
 	public static function is_cms_user() {
 		if ( is_array( $_COOKIE ) && ! empty( $_COOKIE ) ) {
 			foreach ( array_keys( $_COOKIE ) as $cookie ) {
-				if ( $cookie != 'wordpress_test_cookie' &&
-					( substr( $cookie, 0, 2 ) == 'wp' ||
-						substr( $cookie, 0, 9 ) == 'wordpress' ||
-						substr( $cookie, 0, 14 ) == 'comment_author' ) ) {
+				if ( $cookie !== 'wordpress_test_cookie' &&
+					( substr( $cookie, 0, 2 ) === 'wp' ||
+						substr( $cookie, 0, 9 ) === 'wordpress' ||
+						substr( $cookie, 0, 14 ) === 'comment_author' ) ) {
 
 					return(true);
 				}
