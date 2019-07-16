@@ -58,7 +58,10 @@ class Admin_Message {
 
 	public function __construct($message) {
 		if ( isset( $message ) ) {
-			$this->admin_msg = $message;
+			/*
+			 * Improved character coverage.
+			 */
+			$this->admin_msg = filter_var( $message, FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		}
 	}
 
