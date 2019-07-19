@@ -48,7 +48,7 @@ class Base_Plugin extends Singleton_Base {
 	const ASYNC_FILTER_TAG = '<script async ';
 	const DEFER_FILTER_TAG = '<script defer ';
 
-	protected static $async_scripts = array();
+	protected static $async_scripts = array(); // need to revisit this construct
 	protected static $defer_scripts = array();
 	protected static $activated = false;
 
@@ -117,6 +117,9 @@ class Base_Plugin extends Singleton_Base {
 	}
 
 	/**
+	 * Register the asset slug and attempt to normalize the result to ensure that this occurs only once.
+	 * In theory this should make the registration process indempotent.
+	 *
 	 * @param $asset_slug
 	 */
 	public static function set_async_assets( $asset_slug ) {
@@ -128,6 +131,10 @@ class Base_Plugin extends Singleton_Base {
 	}
 
 	/**
+	 * Upon recent developments I have determined that it might be possible
+	 * to convert this to a universal class as this is nothing more than a
+	 * registry pattern.
+	 *
 	 * This wll theoretically only modify the matching handle
 	 * but of course it needs testing. If the handle is found in
 	 * the async_scripts array then we will modify the script call
@@ -139,7 +146,7 @@ class Base_Plugin extends Singleton_Base {
 	public static function async_filter_tag( $tag, $handle, $src ) {
 		$key = self::key_finder( $handle, static::$async_scripts );
 		if ( $handle && in_array( $handle, static::$async_scripts ) ) {
-			static::$async_scripts[$key] = $handle . '-DONE' ;
+			static::$async_scripts[$key] = $handle . '-DONE' ; // eliminates duplicate applications
 			return ( str_replace( static::FILTER_TAG, static::ASYNC_FILTER_TAG, $tag ) );
 		}
 		return( $tag );
